@@ -1,0 +1,229 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/hypertext}
+  [2013/07/10 v0.0 Hypertext management utilities.]
+
+\newif\ifhypertext@color
+\DeclareOption{color}
+  {\hypertext@colortrue}
+
+\ProcessOptions\relax
+
+% ---[ Packages ]---
+
+\RequirePackage{url}
+\RequirePackage{hyperref}
+\RequirePackage{bookmark}
+\RequirePackage{xstring}
+
+\ifhypertext@color
+\RequirePackage{xcolor}
+\fi
+
+% ---[ Configuration ]---
+
+% Package 'hyperref'.
+
+\hypersetup
+  {unicode,
+   pdffitwindow,
+   pdfborder={0 0 0}}
+
+\ifhypertext@color
+
+\definecolor{hyperlink}{named}{NavyBlue}
+
+\hypersetup
+  {colorlinks,
+   linkcolor=hyperlink,
+   anchorcolor=hyperlink,
+   citecolor=hyperlink,
+   filecolor=hyperlink,
+   menucolor=hyperlink,
+   runcolor=hyperlink,
+   urlcolor=hyperlink}
+
+\fi
+
+%% Package 'url'
+
+\DeclareUrlCommand\format@url{\urlstyle{sf}}
+\DeclareUrlCommand\format@email{\urlstyle{sf}}
+\DeclareUrlCommand\format@webpage{\urlstyle{sf}}
+
+\renewcommand{\url}[1]
+  {\IfBeginWith{#1}{www.}
+     {\webpage{#1}}
+     {\IfBeginWith{#1}{http://}
+       {\webpage{#1}}
+       {\format@url{#1}}}}
+
+% ---[ Commands ]---
+
+\newcommand{\encodeURL}[2]
+  {\def\encoded@URL{#1}%
+   % See latin1.def for more
+   \foreach \the@char / \url@encoding in
+     {% The first entry must be for %, to avoid escaping the
+      % encoding of other characters further down the list.
+      {\%} / {\%25},
+      { } / {\%20},
+      % {!} / {\%21},
+      % {"} / {\%22},
+      % {\#} / {\%23},
+      % {\$} / {\%24},
+      % % %25 is the first element of the list; see above.
+      % {\&} / {\%26},
+      % % {	} / {\%27}, % No idea what this is.
+      % {(} / {\%28},
+      % {)} / {\%29},
+      % {*} / {\%2A},
+      % {+} / {\%2B},
+      % {,} / {\%2C},
+      % % %2D (-) and %2E (.) need not be replaced.
+      % {/} / {\%2F},
+      % {:} / {\%3A},
+      % {;} / {\%3B},
+      % {<} / {\%3C},
+      % {=} / {\%3D},
+      % {>} / {\%3E},
+      % {?} / {\%3F},
+      % {@} / {\%40},
+      % % Letters A-Z need not be replaced.
+      % %{[} / {\%5B}, % TODO
+      % %{\} / {\%5C}, % TODO
+      % %{]} / {\%5D}, % TODO
+      % %{^} / {\%5E}, % TODO
+      % % %5F (_) needs not be replaced.
+      % %{`} / {\%60}, % TODO
+      % % Letters a-z need not be replaced.
+      % %{{} / {\%7B}, % TODO
+      % {|} / {\%7C},
+      % %{}} / {\%7D}, % TODO
+      % {~} / {\%7E},
+      % {\nobreakspace}  / {\%C2\%A0}, % { } / {\%C2\%A0},
+      % {\textexclamdown} / {\%C2\%A1}, % {¡} / {\%C2\%A1},
+      % {\textcent} / {\%C2\%A2}, % {¢} / {\%C2\%A2},
+      % {\pounds} / {\%C2\%A3}, % {£} / {\%C2\%A3},
+      % {\textcurrency} / {\%C2\%A4}, % {¤} / {\%C2\%A4},
+      % {\textyen} / {\%C2\%A5}, % {¥} / {\%C2\%A5},
+      % {\textbrokenbar} / {\%C2\%A6}, % {¦} / {\%C2\%A6},
+      % {\S} / {\%C2\%A7}, % {§} / {\%C2\%A7},
+      % {\"{}} / {\%C2\%A8}, % {¨} / {\%C2\%A8},
+      % {\copyright} / {\%C2\%A9}, % {©} / {\%C2\%A9},
+      % {\textordfeminine} / {\%C2\%AA}, % {ª} / {\%C2\%AA},
+      % {\guillemotleft} / {\%C2\%AB}, % {«} / {\%C2\%AB},
+      % {\lnot} / {\%C2\%AC}, % {¬} / {\%C2\%AC},
+      % {\-} / {\%C2\%AD},
+      % {\textregistered} / {\%C2\%AE}, % {®} / {\%C2\%AE},
+      % {¯} / {\%C2\%AF},
+      % {\textdegree} / {\%C2\%B0}, % {°} / {\%C2\%B0},
+      % {\pm} / {\%C2\%B1}, % {±} / {\%C2\%B1},
+      % {\mathtwosuperior} / {\%C2\%B2}, % {²} / {\%C2\%B2},
+      % {\maththreesuperior} / {\%C2\%B3}, % {³} / {\%C2\%B3},
+      % {\`{}} / {\%C2\%B4},
+      % {\mu} / {\%C2\%B5}, % {µ} / {\%C2\%B5},
+      % {\P} / {\%C2\%B6}, % {¶} / {\%C2\%B6},
+      % {\textperiodcentered} / {\%C2\%B7}, % {·} / {\%C2\%B7},
+      % {\c\ } / {\%C2\%B8}, % {¸} / {\%C2\%B8},
+      % {\mathonesuperior} / {\%C2\%B9}, % {¹} / {\%C2\%B9},
+      % {\textordmasculine} / {\%C2\%BA}, % {º} / {\%C2\%BA},
+      % {\guillemotright} / {\%C2\%BB}, % {»} / {\%C2\%BB},
+      % {\textonequarter} / {\%C2\%BC}, % {¼} / {\%C2\%BC},
+      % {\textonehalf} / {\%C2\%BD}, % {½} / {\%C2\%BD},
+      % {\textthreequarters} / {\%C2\%BE}, % {¾} / {\%C2\%BE},
+      % {\textquestiondown} / {\%C2\%BF}, % {¿} / {\%C2\%BF},
+      {\`A} / {\%C3\%80}, % {À} / {\%C3\%80},
+      {\'A} / {\%C3\%81}, % {Á} / {\%C3\%81},
+      {\^A} / {\%C3\%82}, % {Â} / {\%C3\%82},
+      {\~A} / {\%C3\%83}, % {Ã} / {\%C3\%83},
+      {\"A} / {\%C3\%84}, % {Ä} / {\%C3\%84},
+      {\r A} / {\%C3\%85}, % {Å} / {\%C3\%85},
+      {\AE} / {\%C3\%86}, % {Æ} / {\%C3\%86},
+      {\c C} / {\%C3\%87}, % {Ç} / {\%C3\%87},
+      {\`E} / {\%C3\%88}, % {È} / {\%C3\%88},
+      {\'E} / {\%C3\%89}, % {É} / {\%C3\%89},
+      {\^E} / {\%C3\%8A}, % {Ê} / {\%C3\%8A},
+      {\"E} / {\%C3\%8B}, % {Ë} / {\%C3\%8B},
+      {\`I} / {\%C3\%8C}, % {Ì} / {\%C3\%8C},
+      {\'I} / {\%C3\%8D}, % {Í} / {\%C3\%8D},
+      {\^I} / {\%C3\%8E}, % {Î} / {\%C3\%8E},
+      {\"I} / {\%C3\%8F}, % {Ï} / {\%C3\%8F},
+      {\DH} / {\%C3\%90}, % {Ð} / {\%C3\%90},
+      {\~N} / {\%C3\%91}, % {Ñ} / {\%C3\%91},
+      {\`O} / {\%C3\%92}, % {Ò} / {\%C3\%92},
+      {\'O} / {\%C3\%93}, % {Ó} / {\%C3\%93},
+      {\^O} / {\%C3\%94}, % {Ô} / {\%C3\%94},
+      {\~O} / {\%C3\%95}, % {Õ} / {\%C3\%95},
+      {\"O} / {\%C3\%96}, % {Ö} / {\%C3\%96},
+      % {\times} / {\%C3\%97}, % {×} / {\%C3\%97},
+      {\O} / {\%C3\%98}, % {Ø} / {\%C3\%98},
+      {\`U} / {\%C3\%99}, % {Ù} / {\%C3\%99},
+      {\'U} / {\%C3\%9A}, % {Ú} / {\%C3\%9A},
+      {\^U} / {\%C3\%9B}, % {Û} / {\%C3\%9B},
+      {\"U} / {\%C3\%9C}, % {Ü} / {\%C3\%9C},
+      {\'Y} / {\%C3\%9D}, % {Ý} / {\%C3\%9D},
+      {\TH} / {\%C3\%9E}, % {Þ} / {\%C3\%9E},
+      {\ss} / {\%C3\%9F}, % {ß} / {\%C3\%9F},
+      {\`a} / {\%C3\%A0}, % {à} / {\%C3\%A0},
+      {\'a} / {\%C3\%A1}, % {á} / {\%C3\%A1},
+      {\^a} / {\%C3\%A2}, % {â} / {\%C3\%A2},
+      {\~a} / {\%C3\%A3}, % {ã} / {\%C3\%A3},
+      {\"a} / {\%C3\%A4}, % {ä} / {\%C3\%A4},
+      {\r a} / {\%C3\%A5}, % {å} / {\%C3\%A5},
+      {\ae} / {\%C3\%A6}, % {æ} / {\%C3\%A6},
+      {\c c} / {\%C3\%A7}, % {ç} / {\%C3\%A7},
+      {\`e} / {\%C3\%A8}, % {è} / {\%C3\%A8},
+      {\'e} / {\%C3\%A9}, % {é} / {\%C3\%A9},
+      {\^e} / {\%C3\%AA}, % {ê} / {\%C3\%AA},
+      {\"e} / {\%C3\%AB}, % {ë} / {\%C3\%AB},
+      {\`i} / {\%C3\%AC}, % {ì} / {\%C3\%AC},
+      {\'i} / {\%C3\%AD}, % {í} / {\%C3\%AD},
+      {\^i} / {\%C3\%AE}, % {î} / {\%C3\%AE},
+      {\"i} / {\%C3\%AF}, % {ï} / {\%C3\%AF},
+      {\dh} / {\%C3\%B0}, % {ð} / {\%C3\%B0},
+      {\~n} / {\%C3\%B1}, % {ñ} / {\%C3\%B1},
+      {\`o} / {\%C3\%B2}, % {ò} / {\%C3\%B2},
+      {\'o} / {\%C3\%B3}, % {ó} / {\%C3\%B3},
+      {\^o} / {\%C3\%B4}, % {ô} / {\%C3\%B4},
+      {\~o} / {\%C3\%B5}, % {õ} / {\%C3\%B5},
+      {\"o} / {\%C3\%B6}, % {ö} / {\%C3\%B6},
+      % {\div} / {\%C3\%B7}, % {÷} / {\%C3\%B7},
+      {\o} / {\%C3\%B8}, % {ø} / {\%C3\%B8},
+      {\`u} / {\%C3\%B9}, % {ù} / {\%C3\%B9},
+      {\'u} / {\%C3\%BA}, % {ú} / {\%C3\%BA},
+      {\^u} / {\%C3\%BB}, % {û} / {\%C3\%BB},
+      {\"u} / {\%C3\%BC}, % {ü} / {\%C3\%BC},
+      {\'y} / {\%C3\%BD}, % {ý} / {\%C3\%BD},
+      {\th} / {\%C3\%BE}, % {þ} / {\%C3\%BE},
+      {\"y} / {\%C3\%BF}} % {ÿ} / {\%C3\%BF},
+   {\edef\subst@args
+      {{\encoded@URL}\expandonce\the@char\expandonce\url@encoding}%
+    \expandafter\StrSubstitute\subst@args[\encoded@URL]%
+    \xdef\encoded@URL{\encoded@URL}}%
+   \edef#2{\encoded@URL}}
+
+\newcommand{\email}[2][]
+  {\def\email@subject{#1}%
+   \ifdefvoid{\email@subject}
+     {\ifdefvoid{\@subject}{}
+        {\def\email@subject%
+           {\@subject\ifdefvoid{\@author}{}{ by \@author}}}}{}%
+   \encodeURL{\email@subject}{\email@subject}%
+   \edef\email@link%
+     {mailto:#2\ifdefvoid{\email@subject}{}{?subject=\email@subject}}%
+   \href{\email@link}{\format@email{#2}}}
+
+\newcommand{\webpage}[1]
+  {\StrSubstitute[1]{#1}{http://}{}[\stripped@url]%
+   \href{http://\stripped@url}{\format@webpage{#1}}}
