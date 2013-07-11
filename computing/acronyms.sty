@@ -1,0 +1,105 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/computing/acronyms}
+  [2013/07/11 v0.0 Well-known acronyms related to computing.]
+
+\ProcessOptions\relax
+
+%----[ Packages ]---
+
+\RequirePackage{acronym}
+
+%----[ Acronyms ]---
+
+%% Technical.
+
+\acrodef{AOP}{Aspect-Oriented Programming}
+\acrodef{AOSD}{Aspect-Oriented Software Development}
+\acrodef{CLOS}{Common Lisp Object System}
+\acrodef{CODA}{Context-Oriented Domain Analysis}
+\acrodef{COP}{Context-Oriented Programming}
+\acrodef{CPU}{Central Processing Unit}
+\acrodef{DOM}{Document Object Model}
+\acrodef{DSPL}{Dynamic Software Product Lines}
+\acrodef{FIFO}{First In, First Out}
+\acrodef{FODA}{Feature Oriented Domain Analysis}
+\acrodef{FOP}{Feature Oriented Programming}
+\acrodef{FOSD}{Feature Oriented Software Development}
+\acrodef{GPS}{Global Positioning System}
+\acrodef{HTML}{Hypertext Markup Language}
+\acrodef{LIFO}{Last In First Out}
+\acrodef{MIME}{Multipurpose Internet Mail Extensions}
+\acrodef{MOP}{Meta-Object Protocol}
+\acrodef{RFID}{Radio-Frequency IDentification}
+\acrodef{SDK}{Software Development Kit}
+\acrodef{SPLE}{Software Product Line Engineering}
+\acrodef{SaaS}{Software as a Service}
+\acrodef{URL}{Uniform Resource Locator} % should check
+\acrodef{VM}{Virtual Machine}
+\acrodef{W3C}{World-Wide Web Consortium}
+\acrodef{XML}{eXtensible Markup Language} % should check
+
+%% Associations.
+
+\acrodef{ACM}{Association for Computing Machinery}
+
+%% Conferences.
+
+\acrodef{con:AOSD}[AOSD]{International Conference Aspect-Oriented Software Development}
+\acrodef{con:CLeI}[CLeI]{Latin-American Computing Conference}
+\acrodef{con:ECOOP}[ECOOP]{European Conference on Object-Oriented Programming}
+\acrodef{con:GPCE}[GPCE]{International Conference on Generative Programming and Component Engineering}
+\acrodef{con:ICFP}[ICFP]{International Conference on Functional Pro\-gram\-ming}
+\acrodef{con:ICSE}[ICSE]{International Conference on Software Engineering}
+\acrodef{con:ICSM}[ICSM]{International Conference on Software Maintenance}
+\acrodef{con:Modularity}[Modularity$\cdot${AOSD}]{International Conference on Modularity: Aspect-Oriented Software Development}
+\acrodef{con:OOPSLA}[OOPSLA]{International Conference on Object-Oriented Programming, Systems, Languages \& Applications}
+\acrodef{con:SC}[SC]{International Conference on Software Composition}
+\acrodef{con:SLE}[SLE]{International Conference on Software Language Engineering}
+\acrodef{con:SPLASH}[SPLASH]{ACM Conference on  Systems, Programming, Languages and Applications: Software for Humanity}
+\acrodef{con:SPLC}[SPLC]{Software Product Line Conference}
+\acrodef{con:TOOLS}[TOOLS]{TOOLS Federated Conferences}
+
+%% Workshops.
+
+\acrodef{wsp:COP}{International Workshop on Context-Oriented Programming}
+\acrodef{wsp:DYLA}{International Workshop on Dynamic Languages and Applications}
+\acrodef{wsp:FREECO}{International Workshop on Free Composition}
+\acrodef{wsp:OOLEPJE}{International Workshop on Object-Oriented Language Engineering for the Post-Java Era}
+\acrodef{wsp:OT4AmI}{International Workshop on Object-Oriented Technology for Ambient Intelligence}
+\acrodef{wsp:RAM-SE}{International Workshop on Reflection, Aspect-Oriented Programming and Meta-Data for Software Evolution}
+\acrodef{wsp:REPLS}{Reflectively Extensible Programming Languages and Systems}
+\acrodef{wsp:VariComp}{International Workshop on Variability and Composition}
+
+%----[ Commands ]---
+
+\newcommand{\acinitcomputing}
+  {\acused{CPU}
+   \acused{FIFO}
+   \acused{HTML}
+   \acused{LIFO}
+   \acused{MIME}
+   \acused{URL}
+   \acused{VM}
+   \acused{XML}}
+
+\acinitcomputing % These are well known and need not be spelled out.
+
+\endinput
+
+Emacs/AucTeX
+------------
+Local Variables:
+mode: latex
+eval: (auto-fill-mode nil)
+End:
