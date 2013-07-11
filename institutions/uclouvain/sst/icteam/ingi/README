@@ -1,0 +1,4 @@
+To obtain the LaTeX class file (report.cls), run LaTeX on report.dtx.
+
+To obtain the corresponding PDF documentation (report.pdf), run
+LaTeX on report.drv; it is generated as result of the previous step.
