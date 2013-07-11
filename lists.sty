@@ -1,0 +1,148 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/lists}
+  [2013/07/11 v0.0 List management utilities.]
+
+\ProcessOptions\relax
+
+% ---[ Packages ]---
+
+\RequirePackage{etoolbox}
+\RequirePackage{pgffor}
+\RequirePackage{pgfkeys}
+
+% ---[ Commands ]---
+
+%% List creation.
+
+\newcommand{\listConcat}[3]
+  {\edef\the@first@list{#1}%
+   \edef\the@second@list{#2}%
+   \xdef#3%
+     {\ifdefvoid{\the@first@list}
+        {\the@second@list}
+        {\ifdefvoid{\the@second@list}
+           {\the@first@list}
+           {\the@first@list,\the@second@list}}}}
+
+\newcommand{\listSplit}[4]
+  {\edef\the@list{#1}%
+   \pgfmathparse{int(#2)}\edef\the@split@pos{\pgfmathresult}%
+   \xdef#3{}% first result
+   \xdef#4{}% second result
+   \foreach \entry [count=\n] in \the@list
+     {\ifnumless{\n}{\the@split@pos}
+        {\xdef#3{\ifdefvoid{#3}{}{#3,}\entry}}
+        {\xdef#4{\ifdefvoid{#4}{}{#4,}\entry}}}}
+
+\newcommand{\listHeadTail}[3]
+  {\listSplit{#1}{2}{#2}{#3}}
+
+\newcommand{\listTail}[2]
+  {\listHeadTail{#1}{\list@dummy}{#2}}
+
+\newcommand{\listLast}[3]
+  {\edef\the@list{#1}%
+   \edef\list@tail@len{#2}%
+   \xdef#3{}% result
+   \listLength{\the@list}{\the@list@len}%
+   \listSplit{\the@list}{\the@list@len-\list@tail@len+1}{\list@dummy}{#3}}
+
+\newcommand{\listInclude}[2]
+  {\edef\new@item{#2}
+   \ifdefvoid{#1}{}
+     {\foreach \existing@item in #1
+        {\ifx\new@item\existing@item
+           \gdef\new@item{}
+           \breakforeach
+         \fi}}%
+   \ifdefvoid{\new@item}{}
+     {\ifdefvoid{#1}
+       % first keyword
+       {\xdef#1{\new@item}}
+       % subsequent keywords
+       {\xdef#1{#1,\new@item}}}}
+
+%% List queries.
+
+\newcommand{\listLength}[2]
+  {\edef\the@list{#1}%
+   \foreach \entry [count=#2] in \the@list {}}
+
+\newcommand{\listNth}[3]
+  {\edef\the@list{#1}%
+   \edef\the@entry@pos{#2}%
+   \edef#3{}% empty unless found
+   \foreach \entry [count=\n] in \the@list
+     {\ifnumequal{\n}{\the@entry@pos}
+        {\xdef#3{\entry}%
+         \breakforeach}{}}}
+
+\newcommand{\listHead}[2]
+  {\listNth{#1}{1}{#2}}
+
+%% List enumeration utilities.
+
+\pgfkeys{eclectex/lists/.is family, eclectex/lists,
+  startmark/.store in=\list@startmark, startmark/.value required,
+  firstsep/.store in=\list@firstsep, firstsep/.value required,
+  innersep/.store in=\list@innersep, innersep/.value required,
+  lastsep/.store in=\list@lastsep, lastsep/.value required,
+  endmark/.store in=\list@endmark, endmark/.value required,
+  map/.code={\let\list@map=#1},
+  plain/.style=
+    {startmark={},
+     firstsep={{, }},
+     innersep={\list@firstsep},
+     lastsep={\list@innersep},
+     endmark={},
+     map=\list@map@identity},
+  text/.style=
+    {plain, lastsep={{ and }}},
+  phrase/.style=
+    {text, endmark={.}},
+  oneperline/.style=
+    {plain, firstsep={\\}, innersep={\\}, lastsep={\\}},
+  debug/.style=
+    {startmark={s:}, firstsep={:fs:}, innersep={:is:},
+     lastsep={:ls:}, endmark={:e}}}
+
+\newcommand{\list@map@identity}[1]{#1} % identity macro
+
+\newcommand{\listEnumeration}[2][]
+  {\pgfkeys{eclectex/lists, plain, #1}%
+   \edef\the@list{#2}%
+   \listLength{\the@list}{\the@list@length}%
+   \foreach \entry [count=\entry@pos] in \the@list
+     {\ifdefvoid{\entry}{}
+        {\ifnumequal{\entry@pos}{1}
+           {\list@startmark%
+            \list@map{\entry}%
+            \ifnumequal{\the@list@length}{2}
+              {\list@lastsep} % give precedence to lastsep
+              {\ifnumequal{\the@list@length}{1}
+                 {\list@endmark}
+                 {\list@firstsep}}}
+           {\list@map{\entry}%
+            \ifnumless{\entry@pos}{\the@list@length-1}
+              {\list@innersep}
+              {\ifnumless{\entry@pos}{\the@list@length}
+                 {\list@lastsep}
+                 {\list@endmark}}}}}}
+
+%% Command definition utilities.
+
+\newcommand{\defcsList}[2]
+  {\foreach \entry [count=\n] in {#1}
+     {\listNth{#2}{\n}{\entrydef}%
+      \csxdef{\entry}{\entrydef}}}
