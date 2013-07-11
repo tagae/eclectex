@@ -1,0 +1,7 @@
+              LaTeX utilities related to Springer-Verlag
+
+The following files should be updated when new versions are released
+by the publisher:
+
+  - llncs.cls (last tested: 2.17)
+  - splncs03.bst
