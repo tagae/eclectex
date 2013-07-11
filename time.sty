@@ -1,0 +1,210 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/time}
+  [2013/07/11 v0.0 Utilities related to time.]
+
+\ProcessOptions\relax
+
+% ---[ Packages ]---
+
+\RequirePackage{eclectex/lists}
+
+\RequirePackage{pgffor}
+\RequirePackage{pgfkeys}
+\RequirePackage{etoolbox}
+\RequirePackage{datetime}
+\RequirePackage[cleanlook]{isodate}
+\RequirePackage{xstring}
+\RequirePackage{xspace}
+
+%----[ Configuration ]---
+
+%% Package 'isodate'
+
+% Define missing command (bug fix).
+\def\iso@printmonthday@british{\iso@printmonthday@english}
+
+%% Package 'datetime'
+
+% Fix lack of support for 'british'.
+\providecommand*{\dayofweeknameidbritish}[1]
+  {\ifcase#1\relax
+   \or Sunday%
+   \or Monday%
+   \or Tuesday%
+   \or Wednesday%
+   \or Thursday%
+   \or Friday%
+   \or Saturday%
+   \fi}
+
+\providecommand*{\shortdayofweeknameidbritish}[1]
+  {\ifcase#1\relax
+   \or Sun%
+   \or Mon%
+   \or Tue%
+   \or Wed%
+   \or Thu%
+   \or Fri%
+   \or Sat%
+   \fi}
+
+% ---[ Commands ]---
+
+\newif\iflatex@time@chrono
+
+\pgfkeys{eclectex/time/.is family, eclectex/time,
+  chrono/.is if=latex@time@chrono,
+  iso/.code={\isodate},
+  day month divider/.store in=\latex@time@day@month@divider,
+  day month divider/.value required,
+  month year divider/.store in=\latex@time@month@year@divider,
+  month year divider/.value required,
+  plain/.style=
+    {/eclectex/time,
+     day month divider={\ },
+     month year divider={\ },
+     span/range divider={--},
+     span/list={plain}},
+  english/.style=
+    {/eclectex/time,
+     plain,
+     span/range divider={\ to\ },
+     span/list={text}},
+  debug/.style=
+    {/eclectex/time,
+     day month divider={:d/m:},
+     month year divider={:m/y:},
+     span/range divider={:r:},
+     span/list={debug}}}
+
+\pgfkeys
+ {eclectex/time/span/.is family,
+  eclectex/time/span/.search also={/eclectex/time},
+  eclectex/time/span,
+  range divider/.store in=\latex@time@span@divider,
+  range divider/.value required,
+  list/.store in=\time@span@list@style,
+  list/.value required}
+
+\newif\ifvalid@date
+
+\newcommand{\timeSpan}[2][]
+  {\pgfkeys{eclectex/time/span, chrono, plain, #1}%
+   \edef\the@span{#2}%
+   \ifdefvoid{\the@span}
+     {}% Never
+     {\listEnumeration
+        [\time@span@list@style, map=\print@time@range]{\the@span}}}
+
+\newcommand{\print@time@range}[1]
+  {\foreach \start@date/\end@date in #1
+     {\latex@time@parse@date[start@]{\start@date}%
+      \ifvalid@date%
+        \latex@time@parse@date[end@]{\end@date}%
+        \ifvalid@date%
+          % prefix 0 in case numeric macros are unspecified
+          \ifnumequal{0\the@start@year}{0\the@end@year}
+            {\ifnumequal{0\the@start@month}{0\the@end@month}
+               {\ifnumequal{0\the@start@day}{0\the@end@day}
+                  {% start date = end date
+                   \ifdefvoid{\start@date}
+                     {Always}
+                     {\print@date{\start@date}}}
+                  {\latex@time@print@day[span]{\the@start@day}%
+                   \latex@time@print@day[day@month]{\the@end@day}%
+                   % start year-month = end year-month
+                   \print@date{\the@start@year-\the@start@month}}}
+               {\latex@time@print@day[day@month]{\the@start@day}%
+                \latex@time@print@month[span]{\the@start@month}%
+                \latex@time@print@day[day@month]{\the@end@day}%
+                \latex@time@print@month[month@year]{\the@end@month}%
+                % start year =  end year
+                \latex@time@print@year{\the@start@year}}}
+            {% start year != end year
+             \ifdefvoid{\start@date}
+               {Until \print@date{\end@date}}
+               {\ifdefvoid{\end@date}
+                  {Since \print@date{\start@date}}
+                  {\print@date{\start@date}%
+                   \latex@time@span@divider%
+                   \print@date{\end@date}}}}%
+        \else% print invalid end date 'as is'.
+          \print@date{\start@date}\latex@time@span@divider\end@date%
+        \fi%
+      \else% print invalid start date 'as is'.
+        \start@date%
+      \fi}}
+
+\newcommand{\print@date}[2][]
+  {\edef\the@date{#2}%
+   \latex@time@parse@date{\the@date}%
+   \ifvalid@date%
+     \ifdefvoid{\the@day}
+       {\ifdefvoid{\the@month}
+          {\latex@time@print@year{\the@year}}
+          {\latex@time@print@month[month@year]{\the@month}%
+           \latex@time@print@year{\the@year}}}
+       {\latex@time@print@day[day@month]{\the@day}%
+        \latex@time@print@month[month@year]{\the@month}%
+        \latex@time@print@year{\the@year}}%
+   \else%
+     \the@date%
+   \fi}
+
+\newcounter{latex@time@integer}
+
+\newcommand{\latex@time@print@day}[2][]
+  {\ifdefvoid{#2}{}
+     {\setcounter{latex@time@integer}{#2}\arabic{latex@time@integer}%
+      \ifblank{#1}{}{\csuse{latex@time@#1@divider}}}}
+
+\newcommand{\latex@time@print@month}[2][]
+  {\ifdefvoid{#2}{}
+     {\monthname[#2]% from 'datetime' package
+      \ifblank{#1}{}{\csuse{latex@time@#1@divider}}}}
+
+\newcommand{\latex@time@print@year}[2][]
+  {\ifdefvoid{#2}{}
+     {\setcounter{latex@time@integer}{#2}\arabic{latex@time@integer}%
+      \ifblank{#1}{}{\csuse{latex@time@#1@divider}}}}
+
+\newcommand{\latex@time@parse@date}[2][]
+  {\edef\the@date{#2}%
+   \valid@datetrue%
+   \StrCount{\the@date}{-}[\the@date@resolution]%
+   \ifnumgreater{\the@date@resolution}{2}
+     {\valid@datefalse}% The date contains too many dashes (-).
+     {\ifnumequal{\the@date@resolution}{2}
+        {\StrBehind[2]{\the@date}{-}[\the@day]%
+         \StrBetween[1,2]{\the@date}{-}{-}[\the@month]%
+         \StrBefore{\the@date}{-}[\the@year]}
+        {\def\the@day{}% no day specified by date
+         \ifnumequal{\the@date@resolution}{1}
+           {\StrBehind{\the@date}{-}[\the@month]%
+            \StrBefore{\the@date}{-}[\the@year]}
+           {\def\the@month{}%
+            \edef\the@year{\the@date}}}}%
+   \latex@time@check@date@component{year}%
+   \latex@time@check@date@component{month}%
+   \latex@time@check@date@component{day}%
+   \csedef{the@#1day}{\the@day}%
+   \csedef{the@#1month}{\the@month}%
+   \csedef{the@#1year}{\the@year}}
+
+\newcommand{\latex@time@check@date@component}[1]
+  {% prefix 0 since void components should pass the validation
+   \IfInteger{0\csuse{the@#1}}{}{\valid@datefalse}}
+
+% ---[ Defaults ]---
+
