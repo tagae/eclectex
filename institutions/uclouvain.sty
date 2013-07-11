@@ -1,0 +1,73 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+% Branding utilities follow these guidelines:
+% http://www.uclouvain.be/69482.html
+% http://www.uclouvain.be/69476.html
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/institutions/uclouvain}
+  [2013/07/11 v0.0 Base tools related to UCLouvain, Belgium.]
+
+\DeclareOption*{\PackageWarning{\filebase}{Unknown option `\CurrentOption'}}
+
+\ProcessOptions\relax
+
+%---[ Packages ]---
+
+\RequirePackage{tikz}
+\RequirePackage{acronym}
+
+%---[ Configuration ]---
+
+% Pantone 282 (foncé)
+\providecolor[named]{UCLdark}{cmyk}{1.0, .82, .10, .64}
+
+% Pantone 285 (clair)
+\providecolor[named]{UCLlight}{cmyk}{.90, .48, .0, .0}
+
+%---[ Acronyms ]---
+
+\acrodef{UCLouvain}{Université catholique de Louvain}
+
+%---[ Commands ]---
+
+%% UCL logo
+
+\ifxetex
+\newcommand{\UCL@logofont}{\fontspec{Frutiger LT Std 75 Black}}
+\else
+\newcommand{\UCL@logofont}{\sffamily} % not tested
+\fi
+
+\newcommand{\UCL@logocontent}{U{\kern+.05ex}C{\kern+.1ex}Louvain}
+
+\newlength{\UCL@logopadding}
+\setlength{\UCL@logopadding}{3pt}
+
+\newlength{\UCL@logowidth}
+\settowidth{\UCL@logowidth}{\UCL@logofont\UCL@logocontent}
+\addtolength{\UCL@logowidth}{\UCL@logopadding}
+
+\newlength{\UCL@logoheight}
+\settoheight{\UCL@logoheight}{\UCL@logofont\UCL@logocontent}
+\addtolength{\UCL@logowidth}{\UCL@logopadding}
+%\setlength{\UCL@logoheight}{.5\UCL@logowidth}
+
+\newcommand{\UCLlogo}
+  {\tikz
+     \node
+       [fill=UCLdark,
+        inner sep=\UCL@logopadding,
+        %minimum width=\UCL@logowidth,
+        %minimum height=\UCL@logoheight,
+        font=\UCL@logofont]
+       {\textcolor{white}{\UCL@logocontent}};}
