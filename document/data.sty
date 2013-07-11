@@ -1,0 +1,95 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/document/data}
+  [2012/12/12 v0.0 Document metadata management.]
+
+\ProcessOptions\relax
+
+%---[ Packages ]---
+
+\RequirePackage{eclectex/text}
+
+\RequirePackage{hyperref}
+\RequirePackage{etoolbox}
+\RequirePackage{pgfkeys}
+
+%---[ Commands ]---
+
+%%% Identification
+
+\providecommand{\supertitle}[1]{\def\@supertitle{#1}}
+
+\providecommand{\title}[1]{\def\@title{#1}}
+
+\newcommand{\plaintitle}[1]
+  {\xdef\plain@title{#1}%
+   \AtBeginDocument{\hypersetup{pdftitle={\plain@title}}}}
+
+\apptocmd{\title}
+  {\ifdefvoid{\plain@title}
+     {\distillText{\title@text}{#1}%
+      \plaintitle{\title@text}}{}}{}
+  {\PackageWarning{eclectex/document/data}{Could not add title hook}}
+
+\providecommand{\subtitle}[1]{\def\@subtitle{#1}}
+\let\document@data@subtitle\subtitle
+\renewcommand{\subtitle}[1]
+  {\document@data@subtitle{#1}%
+   \ifdefvoid{\@subtitle}{}
+     {\AtBeginDocument
+        {\ifdefvoid{\@subject}{\hypersetup{pdfsubject={\@subtitle}}}{}}}}
+
+\providecommand{\subject}[1]{\def\@subject{#1}}
+\let\document@data@subject\subject
+\renewcommand{\subject}[1]
+  {\document@data@subject{#1}%
+   \ifdefvoid{\@subject}{}
+     {\AtBeginDocument{\hypersetup{pdfsubject={\@subject}}}}}
+
+\providecommand{\edition}[1]{\def\@edition{#1}}
+
+\providecommand{\date}[1]{\def\@date{#1}}
+\let\document@data@date\date
+\renewcommand{\date}[2][]
+  {\ifblank{#1}
+     {\document@data@date{#2}}
+     {\def\@datestart{#2}\def\@dateend{#1}}}
+
+%%% Contributors
+
+\providecommand{\author}[1]{\def\@author{#1}}
+
+\apptocmd{\author}
+  {\distillText{\plain@author}{#1}%
+   \AtBeginDocument{\hypersetup{pdfauthor={\plain@author}}}}{}
+  {\PackageWarning{eclectex/document/data}{Could not add author hook}}
+
+\providecommand{\contributor}[3][]
+  {\ifblank{#2}{}
+     {\edef\@contributors%
+        {\ifdefvoid{\@contributors}{}{, }%
+         #3: #2\ifblank{#1}{}{ <#1>}}}}
+
+\providecommand{\contact}[2][]
+  {\def\@contact{#2}
+   \ifblank{#1}{}{\def\contact@email{#1}}}
+
+%---[ Defaults ]---
+
+\supertitle{}
+\title{}
+\subtitle{}
+\subject{}
+\author{}
+\date{}
+\edition{}
