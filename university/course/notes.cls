@@ -25,7 +25,7 @@
 \RequirePackage{eclectex/time}
 \RequirePackage{eclectex/fonts}
 \RequirePackage{eclectex/hypertext}
-\RequirePackage{eclectex/formatting}
+\RequirePackage{eclectex/format}
 \RequirePackage{eclectex/copyright}
 \RequirePackage{eclectex/document/data}
 \RequirePackage{eclectex/document/header}
