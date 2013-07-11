@@ -1,0 +1,89 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+% Dev notes
+% ---------
+% - Draw inspiration for further personal data from LDAP defs.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/people/data}
+  [2013/07/11 v0.2 Personal information management.]
+
+\ProcessOptions\relax
+
+%---[ Packages ]---
+
+\RequirePackage{eclectex/document/keywords}
+\RequirePackage{etoolbox}
+
+%---[ Commands ]---
+
+%% Data
+
+% Identification
+
+\newcommand{\personGivenNames}[1]{\def\@personGivenNames{#1}}
+\newcommand{\personFamilyNames}[1]{\def\@personFamilyNames{#1}}
+\newcommand{\personCommonName}[1]{\def\@personCommonName{#1}}
+\newcommand{\personPhoto}[1]{\def\@personPhoto{#1}}
+
+% Birth.
+
+\newcommand{\personBirthdate}[1]{\def\@personBirthdate{#1}}
+\newcommand{\personBirthplace}[1]{\def\@personBirthplace{#1}}
+
+% Nationality (can be a comma-separated list).
+
+\newcommand{\personCitizenship}[1]{\def\@personCitizenship{#1}}
+
+\newcommand{\personGender}[1]{\def\@personGender{#1}}
+
+% Employment
+
+\newcommand{\personAffiliation}[1]{\def\@personAffiliation{#1}}
+\newcommand{\personPosition}[1]{\def\@personPosition{#1}}
+
+% Contact
+
+\newcommand{\personAddress}[2][]%
+  {\def\@personAddress{#2}%
+   \def\@personAddressLink{#1}}
+
+\newcommand{\personEmail}[1]{\def\@personEmail{#1}}
+\newcommand{\personPhone}[1]{\def\@personPhone{#1}}
+\newcommand{\personWeb}[1]{\def\@personWeb{#1}}
+
+% Annotations
+
+\newcommand{\personKeywords}[1]
+  {\def\@personKeywords{#1}%
+   \keywords{#1}}
+
+%---[ Defaults ]---
+
+\personGivenNames{}
+\personFamilyNames{}
+\personCommonName{}
+\personBirthdate{}
+\personBirthplace{}
+\personCitizenship{}
+\personGender{}
+\personAffiliation{}
+\personPosition{}
+\personAddress{}
+\personKeywords{}
+
+\AtBeginDocument
+  {\ifdefvoid{\@personCommonName}
+     {\ifdefvoid{\@personGivenNames}{}
+        {\ifdefvoid{\@personFamilyNames}{}
+           {\personCommonName
+              {\csuse{@personGivenNames} \csuse{@personFamilyNames}}}}}{}}
