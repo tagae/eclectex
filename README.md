@@ -15,21 +15,12 @@ Copy the `eclectex` directory to your LaTeX project, and
 
 ### Git-managed projects
 
-You can import selected parts of the library into your project through
-a sparse checkout of submodules.
+Start by adding eclecTeX as a remote repository:
 
-To start with, enable sparse checkouts in your repository:
+    git remote add eclectex git@github.com:tagae/eclectex.git
 
-    git config core.sparsecheckout true
+You can then pull any branch of the library you need:
 
-Add the repository from which you want to fetch the files:
+    git pull eclectex document-keywords
 
-    git remote add eclectex https://github.com/tagae/eclectex.git
-
-Specify the components you want as part of the sparse checkout:
-
-    echo "boilerplate.sty" >> .git/modules/eclectex/info/sparce-checkout
-
-Pull the code (and repeat whenever needed):
-
-    git submodule update
+Each branch automatically includes needed dependencies.
