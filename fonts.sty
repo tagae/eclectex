@@ -1,0 +1,33 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/fonts}
+  [2013/07/10 v0.0 Font utilities.]
+
+\ProcessOptions\relax
+
+% ---[ Packages ]---
+
+\RequirePackage{ifxetex}
+\ifxetex
+\RequirePackage{fontspec}
+\else
+\RequirePackage[T1]{fontenc} % avoid using together with fontspec
+\fi
+
+% ---[ Configuration ]---
+
+\ifxetex
+\defaultfontfeatures{Ligatures=TeX, Mapping=tex-text, Scale=MatchLowercase}
+\fi
+
+% ---[ Commands ]---

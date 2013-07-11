@@ -21,7 +21,7 @@
 
 %---[ Packages ]---
 
-\RequirePackage{eclectex/document/boilerplate}
+\RequirePackage{eclectex/boilerplate}
 \RequirePackage{etoolbox}
 \RequirePackage[margin={1.5cm, 1.4cm}]{geometry}
 
