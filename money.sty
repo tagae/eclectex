@@ -1,0 +1,43 @@
+% This file is part of eclecTeX, a multi-purpose LaTeX library.
+%
+% © 2009-2013 Sebastián González Montesinos.
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License version 1.3 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Sebastián González.
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/money}
+  [2013/07/11 v0.0 Utilities related to money.]
+
+\ProcessOptions\relax
+
+% ---[ Packages ]---
+
+\RequirePackage{xstring}
+\RequirePackage{pgffor}
+
+% ---[ Commands ]---
+
+\foreach \currency@abbrev / \currency@symbol [count=\currency@index]
+    in {EUR/€, USD/\$, GBP/£, JPY/¥}
+  {\protected@csxdef{currency@\currency@abbrev}{\currency@index}
+   \protected@csxdef{currency@symbol@\currency@abbrev}{\currency@symbol}}
+
+% \newcommand{\money}[2]
+%   {\edef\money@sum{#2}%
+%    \edef\money@sum@thousands{\StrGobbleRight{#2}{3}.\StrRight{#2}{3}}%
+%    \ifnumless{\money@sum}{10000}{}
+%      {\edef\money@sum{\money@sum@thousands{K}}}%
+%       %\pgfmathparse{int(round(\money@sum@thousands))}%
+%       %\xdef\money@sum{\pgfmathresult K}}%
+%    \money@sum\currency@symbol{#1}}
+
+\newcommand{\moneysum}[2]
+  {\ifnumless{#2}{10000}
+     {#2}
+     {\StrGobbleRight{#2}{3}K}%
+   \csuse{currency@symbol@#1}}
