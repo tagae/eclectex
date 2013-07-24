@@ -1,0 +1,132 @@
+% \iffalse
+%
+%<*internal>
+\begingroup
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\preamble
+
+This file is part of eclecTeX, a multi-purpose LaTeX library.
+
+© 2013 by Sebastián González Montesinos <sgm@proglang.net>
+
+Permission is granted to copy, distribute and/or modify this
+software under the terms of the LaTeX Project Public License
+(LPPL), version 1.3.
+
+The LPPL maintenance status of this work is “maintained”.
+The Current Maintainer of this work is Sebastián González Montesinos.
+
+This work consists of the file  selective.dtx
+          and the derived files selective.sty,
+                                selective.ins, and
+                                selective.pdf.
+
+\endpreamble
+
+\askforoverwritefalse
+\usedir{tex/latex/eclectex}
+\generate{\file{\jobname.sty}{\from{\jobname.dtx}{package}}}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\generate{\file{\jobname.ins}{\from{\jobname.dtx}{install}}}
+\endgroup
+%</internal>
+%<*driver>
+\ProvidesFile{selective.dtx}
+
+\NeedsTeXFormat{LaTeX2e}
+
+\documentclass[british]{ltxdoc}
+
+\usepackage{babel}
+\usepackage{geometry}
+
+\usepackage{eclectex/lists}
+
+\title{The \textsf{eclectex/\jobname} package}
+
+\author
+ {Sebasti\'an Gonz\'alez}
+
+\begin{document}
+  \DocInput{selective.dtx}
+\end{document}
+%</driver>
+%\fi
+%
+% \GetFileInfo{selective.dtx}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% The \textsf{\jobname} package permits to tag pieces of {\LaTeX}
+% code, and to selectively include or exclude those pieces according
+% to a set of currently active tags.
+%
+% \StopEventually{\PrintChanges}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{eclectex/selective}
+  [2013/07/11 v0.0 Utilities to selectively typeset tagged text.]
+
+\ProcessOptions\relax
+
+%---[ Packages ]---
+
+\RequirePackage{eclectex/lists}
+
+\RequirePackage{environ}
+\RequirePackage{pgffor}
+
+%---[ Commands ]---
+
+\def\selective@tags{} % current list of tags
+
+\newif\if@body@tags@found
+\newif\if@selective@tag@found
+
+% Expects a list {a1,a2,a3,...},{b1,b2,b3,...},...,{c1,c2,c3,...}
+% Interpreted as a conjunction (AND) of the different disjunctions (OR).
+\NewEnviron{selective}[1]
+  {\def\tagConjunctions{#1}%
+   \@body@tags@foundtrue%
+   \foreach \tagDisjuction in \tagConjunctions
+     {\@selective@tag@foundfalse%
+      \foreach \activeTag in \selective@tags
+        {\foreach \bodyTag in \tagDisjuction
+           {\ifdefstrequal{\activeTag}{\bodyTag}
+              {\global\@selective@tag@foundtrue\breakforeach}{}}}%
+      \if@selective@tag@found\else%
+        \global\@body@tags@foundfalse\breakforeach%
+      \fi}%
+   \if@body@tags@found%
+     \BODY%
+   \fi}
+
+\newcommand{\selectiveTag}[1]
+  {\listInclude{\selective@tags}{#1}%
+   \edef\implied@tags{\csuse{#1@tag@implications}}%
+   %\ifcsvoid{#1@tag@implications}{}
+   \foreach \implied@tag in \implied@tags
+     {\selectiveTag{\implied@tag}}}
+
+\newcommand{\selectiveTagImplies}[2]
+  {\csdef{#1@tag@implications}{#2}}
+%    \end{macrocode}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
