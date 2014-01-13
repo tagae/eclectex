@@ -21,8 +21,13 @@
 
 % ---[ Packages ]---
 
+% The following is to avoid option clashes with many other packages
+% that also load hyperref.
+\@ifpackageloaded{hyperref}
+  {} % already loaded
+  {\RequirePackage{hyperref}}
+
 \RequirePackage{url}
-\RequirePackage{hyperref}
 \RequirePackage{bookmark}
 \RequirePackage{xstring}
 
@@ -67,6 +72,11 @@
      {\IfBeginWith{#1}{http://}
        {\webpage{#1}}
        {\format@url{#1}}}}
+
+%% LaTeX
+
+%\let\orig@textsf=\textsf
+%\renewcommand{\textsf}[1]{\texorpdfstring{\orig@textsf{#1}}{#1}}
 
 % ---[ Commands ]---
 
