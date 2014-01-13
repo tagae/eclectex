@@ -17,11 +17,7 @@
 
 %---[ Packages ]---
 
-\RequirePackage{eclectex/text}
-
-\RequirePackage{hyperref}
 \RequirePackage{etoolbox}
-\RequirePackage{pgfkeys}
 
 %---[ Commands ]---
 
@@ -31,15 +27,11 @@
 
 \providecommand{\title}[1]{\def\@title{#1}}
 
-\newcommand{\plaintitle}[1]
-  {\xdef\plain@title{#1}%
-   \AtBeginDocument{\hypersetup{pdftitle={\plain@title}}}}
-
-\apptocmd{\title}
-  {\ifdefvoid{\plain@title}
-     {\distillText{\title@text}{#1}%
-      \plaintitle{\title@text}}{}}{}
-  {\PackageWarning{eclectex/document/data}{Could not add title hook}}
+\renewcommand{\title}[2][]
+  {\def\@title{#2}%
+   \ifblank{#1}
+     {\gdef\plain@title{#2}}
+     {\gdef\plain@title{#1}}}
 
 \providecommand{\subtitle}[1]{\def\@subtitle{#1}}
 \let\document@data@subtitle\subtitle
@@ -69,10 +61,11 @@
 
 \providecommand{\author}[1]{\def\@author{#1}}
 
-\apptocmd{\author}
-  {\distillText{\plain@author}{#1}%
-   \AtBeginDocument{\hypersetup{pdfauthor={\plain@author}}}}{}
-  {\PackageWarning{eclectex/document/data}{Could not add author hook}}
+\renewcommand{\author}[2][]
+  {\def\@author{#2}%
+   \ifblank{#1}
+     {\gdef\plain@author{#2}}
+     {\gdef\plain@author{#1}}}
 
 \providecommand{\contributor}[3][]
   {\ifblank{#2}{}
@@ -93,3 +86,10 @@
 \author{}
 \date{}
 \edition{}
+
+\AtEndPreamble
+  {\ifcsdef{hypersetup}
+     {\ifdefvoid{\plain@title}{} % default PDF title
+        {\hypersetup{pdftitle={\plain@title}}}%
+      \ifdefvoid{\plain@author}{} % default PDF author
+        {\hypersetup{pdfauthor={\plain@author}}}}{}}

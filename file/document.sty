@@ -69,12 +69,15 @@
            {\documentDateFont\today}};}%
      \ifdefvoid{\@fileRecipent}{}
        {\node
-          [text width=\recipientWidth, right=\recipientSep of document title]
+          [text width=\recipientWidth,
+           right=\recipientSep of document title.north east,
+           anchor=north west]
           (document recipient)
           {{\documentRecipientFont Presented to\\\@fileRecipent\par}};}%
      \ifdefvoid{\@fileReference}{}
        {\node
-          [below=\referenceSep of document recipient]
+          [below=\referenceSep of document recipient.south west,
+           anchor=north west]
           (document reference)
           {{\documentRecipientFont \textbf{Ref.:} \@fileReference}};}%
    \end{tikzpicture}
