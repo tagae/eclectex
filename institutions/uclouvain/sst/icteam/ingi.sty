@@ -28,25 +28,36 @@
 
 \acrodef{INGI}{Pôle d'ingénierie informatique}
 
-%\if@english
+\if@english
 
 \acrodef{INGI}%
-  [\href{http://uclouvain.be/ingi}{INGI}]%
+  [\href{http://uclouvain.be/en-ingi}{INGI}]%
   {Computing Science Engineering Department}
 
 \acrodef{LSINF2335}%
   [\href{http://www.uclouvain.be/en-cours-\the\year-lsinf2335.html}{LSINF2335}]
   {Programming Paradigms\acroextra{: Theory, Practice and Applications}}
 
-% \else
+\acrodef{LSINF1212}%
+  [\href{http://www.uclouvain.be/en-cours-\the\year-lsinf1212.html}{LSINF1212}]
+  {Computer Science Deepening Project}
 
-% \if@french
+ \else
 
-% \else
+ \if@french
 
-% \PackageError{\filebase}{Unknown document language}{The recognised
-%   language options are `english`, `british` and `french`.}
+\acrodef{INGI}%
+  [\href{http://uclouvain.be/ingi}{INGI}]%
+  {Pôle d'ingénierie informatique}
 
-% \fi
+\acrodef{LSINF1212}%
+  [\href{http://www.uclouvain.be/cours-\the\year-lsinf1212.html}{LSINF1212}]
+  {Projet d'approfondissement en informatique}
 
-% \fi
+ \else
+
+ \PackageError{\filebase}{Unknown document language}{The recognised
+   language options are `english`, `british` and `french`.}
+
+\fi
+\fi

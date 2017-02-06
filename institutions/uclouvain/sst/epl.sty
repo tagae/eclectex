@@ -28,21 +28,21 @@
 
 %---[ Acronyms ]---
 
-\acrodef{EPL}{École Polytechnique de Louvain}
+\if@english
 
-%\if@english
+\acrodef{EPL}[\href{http://uclouvain.be/en-epl}{EPL}]{Louvain School of Engineering}
+\else
 
-%\acrodef{EPL}[\href{http://uclouvain.be/epl}{EPL}]{Louvain School of Engineering}
 
-% \else
+\if@french
 
-% \if@french
+\acrodef{EPL}[\href{http://uclouvain.be/epl}{EPL}]{École polytechnique de Louvain}
 
-% \else
+\else
 
-% \PackageError{\filebase}{Unknown document language}{The recognised
-%   language options are `english`, `british` and `french`.}
+\PackageError{\filebase}{Unknown document language}{The recognised
+  language options are `english`, `british` and `french`.}
 
-% \fi
+\fi
 
-% \fi
+\fi

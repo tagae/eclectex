@@ -1,0 +1,63 @@
+%%
+%% This is file `selective.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% selective.dtx  (with options: `package')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from selective.sty.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file selective.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%% © 2013 Sebastián González
+%%
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{eclectex/selective}
+  [2013/07/11 v0.0 Utilities to selectively typeset text]
+\RequirePackage{eclectex/lists}
+\RequirePackage{environ}
+\RequirePackage{pgffor}
+
+\def\selective@tags{}
+\newif\if@body@tags@found
+\newif\if@selective@tag@found
+\NewEnviron{selective}[1]
+  {\def\tagConjunctions{#1}%
+   \@body@tags@foundtrue%
+   \foreach \tagDisjuction in \tagConjunctions
+     {\@selective@tag@foundfalse%
+      \foreach \activeTag in \selective@tags
+        {\foreach \bodyTag in \tagDisjuction
+           {\ifdefstrequal{\activeTag}{\bodyTag}
+              {\global\@selective@tag@foundtrue\breakforeach}{}}}%
+      \if@selective@tag@found\else%
+        \global\@body@tags@foundfalse\breakforeach%
+      \fi}%
+   \if@body@tags@found%
+     \BODY%
+   \fi}
+
+\newcommand{\selectiveTag}[1]
+  {\listInclude{\selective@tags}{#1}%
+   \edef\implied@tags{\csuse{#1@tag@implications}}%
+   %\ifcsvoid{#1@tag@implications}{}
+   \foreach \implied@tag in \implied@tags
+     {\selectiveTag{\implied@tag}}}
+
+\newcommand{\selectiveTagImplies}[2]
+  {\csdef{#1@tag@implications}{#2}}
+\endinput
+%%
+%% End of file `selective.sty'.

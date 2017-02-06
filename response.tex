@@ -1,0 +1,110 @@
+\documentclass{article}
+
+\usepackage{response}
+
+% Additional packages used in this particular sample document.
+\usepackage{fixltx2e}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[inline]{enumitem}
+\usepackage{geometry}
+
+\title{The \textsf{response} Package: Sample Usage}
+\author{Sebastián González}
+
+\begin{document}
+
+\maketitle
+
+\noindent
+\textsl{(Note that the document must be compiled twice for the counters
+  to be updated.)}
+
+\section*{Response}
+
+We would like to thank our anonymous reviewers for their efforts in
+revising our first submission of the paper. We have considered all
+remarks carefully, and addressed them to the best of our
+possibilities.
+
+The input from the reviews has been split into \arabic{totalremarks}
+different remarks. Each remark is followed by our response and an
+explicit status indication:
+\begin{itemize}[nosep,label=--]
+\newcommand{\total}[1]
+  {\makebox[3ex][r]{\arabic{total#1}} remarks are flagged as
+    \csname status#1\endcsname}
+\item \total{solved}
+\item \total{future}
+\item \total{incorrect}\footnote{The remark seems to have overlooked
+  a point made in the paper. We explain where and how the point is
+  made.}
+\item \total{disagree}\footnote{We ask the reviewer to reconsider
+  the remark in the light of arguments and clarifications we give.}
+\item \total{unsolved}\footnote{We could not accommodate the remark
+  in the text due to blocking constraints (most likely lack of
+  space, or else lack of time).}
+\item \total{unspecific}\footnote{The remark is difficult to address
+  without further input or feedback from the reviewer.}
+\end{itemize}
+
+\ifnumless{\value{totalresponses}}{\value{totalremarks}}
+  {Watch out: there are a total of \arabic{totalremarks}
+   remarks, but only \arabic{totalresponses} responses.}{}
+
+\subsection*{Review 1}
+
+\begin{remark}
+  This paper positions itself very clearly from the point of [...]
+\end{remark}
+\begin{solved}
+  We appreciate this positive feedback.
+\end{solved}
+
+\begin{remark}
+  The section with case studies is not the strongest IMO [...]
+\end{remark}
+\begin{future}
+  We agree that more validation is needed [...]
+\end{future}
+
+\begin{remark}
+  The reader may easily get lost about [...]
+\end{remark}
+\begin{unspecific}
+  All key ingredients are explicitly mentioned [...]
+\end{unspecific}
+
+\begin{remark}
+  The general policy presented in section 2.5 looks OK but very naive.
+  It will work for some kinds of applications but not for any.
+\end{remark}
+\begin{incorrect}
+  The paper does not claim that [...]
+\end{incorrect}
+
+\begin{remark}
+  The jQuery mobile example has a similar problem [...]
+\end{remark}
+\begin{disagree}
+  That is not the point of this validation case [...]
+\end{disagree}
+
+\begin{remark}
+  The introduction is rather weak [...]
+\end{remark}
+\begin{unsolved}
+  We agree that we could motivate the problem further [...]  Much to
+  our regret, we can barely fit the paper as it is now in 12 pages.
+\end{unsolved}
+
+\begin{remark}
+  Finally, the paper is generally well-written, in an accessible
+  style, although there is definite room for improvement here [...]
+\end{remark}
+\begin{unspecific}
+  All key ingredients that make up the overall computation model are
+  explicitly mentioned [...]
+\end{unspecific}
+
+\end{document}

@@ -29,7 +29,24 @@
 
 %% Default metadata
 
+\if@english
+
 \subject{Practical session}
+
+\else
+
+\if@french
+
+\subject{Travail pratique}
+
+\else
+
+\PackageError{\filebase}{Unknown document language}{The recognised
+  language options are `english`, `british` and `french`.}
+
+\fi
+
+\fi
 
 %---[ Commands ]---
 
@@ -37,8 +54,19 @@
 
 \newcounter{session}
 
+\if@english
 \newcommand{\session}[1]
   {\def\@session{#1}
    \ifdefvoid{\@session}{}
      {\setcounter{session}{\@session}
       \subject{\engordnumber{\@session} practical session}}}
+\fi
+
+
+\if@french
+\newcommand{\session}[1]
+  {\def\@session{#1}
+   \ifdefvoid{\@session}{}
+     {\setcounter{session}{\@session}
+      \subject{Travail pratique \@session}}}
+\fi

@@ -107,20 +107,15 @@
        {\ifdef{\@datestart}{\daterange{\@datestart}{\@dateend}}{}}
        {\printdate{\@date}%
         \ifdefvoid{\@sessionStartTime}{}{, \@sessionStartTime%
-          \ifdefvoid{\@sessionEndTime}{}{ till \@sessionEndTime}}}%
+          \ifdefvoid{\@sessionEndTime}{}{--\@sessionEndTime}}}%
      \ifdefvoid{\@location}{}{ @ {\@location}}%
+     \ifdefvoid{\@contact}{}{\@contact}%
      \ifboolexpr
-       { not test {\ifdefvoid{\@contact}} and
+       { not test {\ifdefvoid{\@contact}} or
          not test {\ifdefvoid{\contact@email}} }
-       {Contact: {\@contact} <\contact@email>}{}%
-     \ifboolexpr
-       { test {\ifdefvoid{\@contact}} and
-         not test {\ifdefvoid{\contact@email}} }
-       {Contact: \contact@email}{}%
-     \ifboolexpr
-       { not test {\ifdefvoid{\@contact}} and
-         test {\ifdefvoid{\contact@email}} }
-       {Contact: \@contact}{}}
+       { }{}%
+     \ifdefvoid{\contact@email}{}%
+       {<\href{mailto:\contact@email}{\contact@email}>}}
   \end{minipage}
   \par\bigskip
   \ifdefvoid{\@title}{\bigskip}

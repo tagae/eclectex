@@ -1,0 +1,136 @@
+% \iffalse
+%
+%  This file is part of eclecTeX, a multi-purpose LaTeX library.
+%%
+%% © 2013 Sebastián González
+%%
+%  Permission is granted to copy, distribute and/or modify this
+%  software under the terms of the LaTeX Project Public License
+%  (LPPL), version 1.3.
+%
+%  The LPPL maintenance status of this work is “maintained”.
+%  The Current Maintainer of this work is Sebastián González Montesinos.
+%
+% \fi
+%
+% \CheckSum{0}
+%
+% \section{Introduction}
+%
+% \thispackage permits to tag pieces of {\LaTeX} code, so that they
+% can selectively be included or excluded according to a set of
+% currently active tags.
+%
+% \section{Internals}
+%
+% \subsection{Installation}
+%
+% A standard \texttt{\jobname.ins} file is provided in the package
+% distribution.
+%
+% \iffalse
+%<*internal>
+\begingroup
+%</internal>
+%<*installer>
+\input docstrip
+\keepsilent
+\askforoverwritefalse
+\usedir{tex/latex/eclectex}
+\generate{\file{\jobname.sty}{\from{\jobname.dtx}{package}}}
+%</installer>
+%<*internal>
+\generate{\file{\jobname.ins}{\from{\jobname.dtx}{installer}}}
+\endgroup
+%</internal>
+%<installer>\endbatchfile
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<*driver>
+\ProvidesFile{eclectex/selective.dtx}
+%</driver>
+%<package>\ProvidesPackage{eclectex/selective}
+  [2013/07/11 v0.0 Utilities to selectively typeset text]
+%
+%<*driver>
+\documentclass[british]{ltxdoc}
+
+\usepackage{geometry}
+\usepackage{hypdoc}
+\usepackage{xspace}
+
+\usepackage{eclectex/i18n}
+\usepackage{eclectex/hypertext}
+\usepackage{eclectex/document/data}
+
+\newcommand*\pkg[1]{\textsf{#1}}
+\newcommand{\thispackage}{The \pkg{\jobname} package\xspace}
+
+\GetFileInfo{\jobname.sty}
+\title{\thispackage}
+\author{Sebastián González}
+\date{\filedate \qquad \fileversion}
+
+\begin{document}
+  \maketitle
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+%<*package>
+% \fi
+%
+% \subsection{Implementation}
+%
+% \subsubsection{Dependencies}
+%    \begin{macrocode}
+\RequirePackage{eclectex/lists}
+\RequirePackage{environ}
+\RequirePackage{pgffor}
+%    \end{macrocode}
+
+% \subsubsection{Commands}
+% Define current list of tags.
+%    \begin{macrocode}
+\def\selective@tags{}
+%    \end{macrocode}
+% Define a few handy conditionals.
+%    \begin{macrocode}
+\newif\if@body@tags@found
+\newif\if@selective@tag@found
+%    \end{macrocode}
+% Expects a list {a1,a2,a3,...},{b1,b2,b3,...},...,{c1,c2,c3,...}
+% Interpreted as a conjunction (AND) of the different disjunctions (OR).
+%    \begin{macrocode}
+\NewEnviron{selective}[1]
+  {\def\tagConjunctions{#1}%
+   \@body@tags@foundtrue%
+   \foreach \tagDisjuction in \tagConjunctions
+     {\@selective@tag@foundfalse%
+      \foreach \activeTag in \selective@tags
+        {\foreach \bodyTag in \tagDisjuction
+           {\ifdefstrequal{\activeTag}{\bodyTag}
+              {\global\@selective@tag@foundtrue\breakforeach}{}}}%
+      \if@selective@tag@found\else%
+        \global\@body@tags@foundfalse\breakforeach%
+      \fi}%
+   \if@body@tags@found%
+     \BODY%
+   \fi}
+
+\newcommand{\selectiveTag}[1]
+  {\listInclude{\selective@tags}{#1}%
+   \edef\implied@tags{\csuse{#1@tag@implications}}%
+   %\ifcsvoid{#1@tag@implications}{}
+   \foreach \implied@tag in \implied@tags
+     {\selectiveTag{\implied@tag}}}
+
+\newcommand{\selectiveTagImplies}[2]
+  {\csdef{#1@tag@implications}{#2}}
+%    \end{macrocode}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale

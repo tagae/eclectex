@@ -97,7 +97,8 @@
 %% LaTeX.
 
 \let\orig@maketitle\maketitle
-\renewcommand{\maketitle}
+\newcommand{\maketitlee}{}
+\renewcommand{\maketitlee}
   {\orig@maketitle
    \if@answers
      \stamp[with]{ANSWERS}{answer}

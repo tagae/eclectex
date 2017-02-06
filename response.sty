@@ -1,0 +1,86 @@
+% Permission is granted to copy, distribute and modify this software under
+% the terms of the LaTeX Project Public License (LPPL) version 1.3.
+%
+% Contributors
+% ------------
+% 2013: Sebastián González Montesinos <tagae@ehub.io>
+
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+
+\ProvidesPackage{response}
+  [2013/10/28 v0.1 Utilities to write review response letters]
+
+\RequirePackage{pgffor}
+\RequirePackage{xcolor}
+\RequirePackage{etoolbox}
+\RequirePackage{newfile}
+\RequirePackage{framed}
+
+\colorlet{quote}{black!60}
+\colorlet{remark}{black!80}
+
+\definecolor{solved}{hsb}    { .35, 1, .7}
+\definecolor{future}{hsb}    { .50, 1, .7}
+\definecolor{incorrect}{hsb} { .65, 1, .7}
+\definecolor{disagree}{hsb}  { .80, 1, .9}
+\definecolor{unsolved}{hsb}  { .95, 1, .7}
+\definecolor{unspecific}{hsb}{ .10, 1, .8}
+
+\newcommand{\status}[2]{\textsf{[\,\textcolor{#1}{#2}\,]}}
+\newcommand{\statusincorrect}{\status{incorrect}{Misunderstanding}}
+\newcommand{\statusunsolved}{\status{unsolved}{Blocked}}
+\newcommand{\statusdisagree}{\status{disagree}{Reconsider}}
+\newcommand{\statusunspecific}{\status{unspecific}{Feedback}}
+\newcommand{\statusfuture}{\status{future}{Future work}}
+\newcommand{\statussolved}{\status{solved}{OK}}
+
+\makeatletter
+\newcommand*{\@doendeq}
+ {\everypar{{\setbox\z@\lastbox}\everypar{}}}
+\newenvironment{remark}[1]
+  {\addtocounter{remarks}{1}%
+   \begingroup%
+   \color{remark}%
+   \def\FrameCommand{\vrule width 1pt \hspace{10pt}}%
+   \MakeFramed {\advance\hsize-\width \FrameRestore}%
+   \slshape\noindent%
+   #1}
+  {\endMakeFramed%
+   \endgroup\ignorespacesafterend\aftergroup\@doendeq}
+\makeatother
+\renewenvironment{quote}
+  {\par\noindent\begingroup\color{quote}``\,\upshape\ignorespaces}
+  {\unskip''\endgroup\par\noindent\ignorespacesafterend}
+
+\newenvironment{incorrect}{\addtocounter{incorrect}{1}\statusincorrect}{}
+\newenvironment{unsolved}{\addtocounter{unsolved}{1}\statusunsolved}{}
+\newenvironment{disagree}{\addtocounter{disagree}{1}\statusdisagree}{}
+\newenvironment{unspecific}{\addtocounter{unspecific}{1}\statusunspecific}{}
+\newenvironment{future}{\addtocounter{future}{1}\statusfuture}{}
+\newenvironment{solved}{\addtocounter{solved}{1}\statussolved}{}
+
+\def\flags{remarks,solved,unsolved,incorrect,disagree,unspecific,future}
+
+\foreach \flag in \flags
+  {\expandafter\newcounter{\flag}
+   \expandafter\newcounter{total\flag}}
+
+\InputIfFileExists{\jobname.cnt}{}{}
+
+\newcounter{totalresponses}
+\defcounter{totalresponses}%
+  {\value{totalincorrect} +
+   \value{totalunsolved} +
+   \value{totaldisagree} +
+   \value{totalunspecific} +
+   \value{totalfuture} +
+   \value{totalsolved}}
+
+\newoutputstream{counters}
+\openoutputfile{\jobname.cnt}{counters}
+
+\AtEndDocument
+  {\foreach \flag in \flags
+     {\addtostream{counters}%
+        {\noexpand\setcounter{total\flag}{\arabic{\flag}}}}
+   \closeoutputstream{counters}}

@@ -38,3 +38,9 @@
 \fi
 
 % ---[ Commands ]---
+
+\newif\if@english
+\newif\if@french
+\iflanguage{english}{\@englishtrue}{}
+\iflanguage{british}{\@englishtrue}{}
+\iflanguage{french}{\@frenchtrue}{}

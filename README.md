@@ -2,7 +2,7 @@ eclecTeX
 ========
 
 An eclectic family of LaTeX libraries to avoid boilerplate and iron
-out rough edges.
+out old rough edges.
 
 
 Use
@@ -15,12 +15,17 @@ Copy the `eclectex` directory to your LaTeX project, and
 
 ### Git-managed projects
 
-Start by adding eclecTeX as a remote repository:
+You can add eclecTeX as a plain submodule:
 
-    git remote add eclectex git@github.com:tagae/eclectex.git
+    git submodule add -b base --name eclectex -- ~/Projects/eclectex eclectex
+    git ci -m "Added eclecTeX submodule."
 
-You can then pull any branch of the library you need:
+and create a `config' branch where you manage the desired configuration:
 
-    git pull eclectex document-keywords
+    cd eclectex
+    git checkout -b config
 
-Each branch automatically includes needed dependencies.
+and then pull in all desired submodules into your current configuration:
+
+    git pull origin university-course-notes
+    git commit -m "Added university-course-notes."
